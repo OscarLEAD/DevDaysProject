@@ -63,6 +63,30 @@ npm run test:unit   # Vitest unit tests (transforms + data-access helpers)
 npm run test:e2e    # Playwright E2E tests (builds + previews the static site first)
 ```
 
+## Coding Standards
+
+Clear, documented coding standards keep the codebase consistent and make it easier for new contributors (and Copilot) to produce correct changes.
+
+### Key Principles
+
+- **Comment intent, not mechanics** — Explain *why* code exists or the reasoning behind decisions, not *what* it does
+- **Document the data layer** — All exported functions in `db/` and `src/lib/` must have TSDoc/JSDoc comments
+- **Document component contracts** — Reusable `.astro` components must document their `Props` interface
+- **Explicit types** — TypeScript functions must have explicit parameter and return types
+- **Keep comments current** — Update or delete comments that become outdated as code changes
+
+### Instruction Files
+
+The following `.github/instructions/` files document the coding standards in detail:
+
+- [**astro.instructions.md**](.github/instructions/astro.instructions.md) — Astro component patterns, component Props documentation, and comment philosophy
+- [**drizzle.instructions.md**](.github/instructions/drizzle.instructions.md) — Data layer patterns, TSDoc requirements, and comment standards
+- [**ts-formatting.instructions.md**](.github/instructions/ts-formatting.instructions.md) — TypeScript formatting, type annotations, naming conventions, and ESLint enforcement
+- [**unit-tests.instructions.md**](.github/instructions/unit-tests.instructions.md) — Vitest unit testing guidelines
+- [**playwright.instructions.md**](.github/instructions/playwright.instructions.md) — Playwright E2E testing guidelines
+- [**style.instructions.md**](.github/instructions/style.instructions.md) — Tailwind CSS and dark theme styling
+- [**ui.instructions.md**](.github/instructions/ui.instructions.md) — UI component strategy, accessibility, and testability
+
 ## Linting
 
 The frontend uses ESLint to enforce code quality across TypeScript and Astro files. Run it with:
@@ -71,7 +95,7 @@ The frontend uses ESLint to enforce code quality across TypeScript and Astro fil
 npm run lint
 ```
 
-ESLint is also run automatically in CI on pull requests to `main`.
+ESLint is also run automatically in CI on pull requests to `main`. See [**ts-formatting.instructions.md**](.github/instructions/ts-formatting.instructions.md) for the enforcement rules.
 
 ## Type checking
 
