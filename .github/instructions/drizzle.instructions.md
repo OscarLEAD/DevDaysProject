@@ -38,18 +38,53 @@ The app's data lives in a local SQLite database accessed through **Drizzle ORM**
 
 ## Data-Access Helpers (injectable db)
 
-Helpers take the `db` instance as their first argument so they work both with the real client (in pages) and an in-memory client (in tests):
+Helpers take the `db` instance as their first argument so they work both with the real client (in pages) and an in-memory client (in tests).
+
+### TSDoc/JSDoc Documentation
+
+Every exported function in `db/` and `src/lib/` must have a TSDoc/JSDoc comment describing its purpose, parameters, and return value. This ensures the data layer API is self-explanatory:
 
 ```ts
 import { asc, count, eq } from 'drizzle-orm';
 import type { Database } from './db';
 import { games } from '../../db/schema';
 
+/**
+ * Retrieves all game IDs ordered alphabetically by title.
+ * Ordering by a stable column ensures deterministic static builds.
+ * 
+ * @param db - The injected database client (real or in-memory for testing)
+ * @returns Array of game IDs in title order
+ */
 export async function getAllGameIds(db: Database): Promise<number[]> {
   const rows = await db.select({ id: games.id }).from(games).orderBy(asc(games.title));
   return rows.map((r) => r.id);
 }
 ```
+
+### Comment Philosophy
+
+Follow these guidelines for comments:
+
+- **Comment intent, not mechanics.** Explain *why* a piece of code exists or the reasoning behind a non-obvious decision, not *what* the code already says.
+- **Remove restating comments.** Delete comments that merely paraphrase the line below them.
+- **Keep comments current.** Treat outdated comments as bugs — update or delete them in the same change that touches the related code.
+
+**Good:**
+```ts
+// Order by title to ensure deterministic pagination across rebuilds
+const rows = await db.select({ id: games.id }).from(games).orderBy(asc(games.title));
+```
+
+**Bad (restating code):**
+```ts
+// Select id from games
+const rows = await db.select({ id: games.id }).from(games);
+// Order by title
+.orderBy(asc(games.title));
+```
+
+### Examples
 
 - Always `order by` a stable column (title) so static builds are deterministic.
 - Map raw rows to the app-facing `Game`/`Publisher`/`Category` types in one place; don't leak Drizzle row shapes into components.
