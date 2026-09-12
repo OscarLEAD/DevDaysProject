@@ -114,6 +114,58 @@ There is no Svelte/React layer. When a page genuinely needs client behaviour, ad
 - Run `npx astro sync` to (re)generate route/content types before linting or type-checking
 - `.astro` files are type-checked by `npm run typecheck:astro` (which runs `astro sync` then `astro check`), on the classic `typescript` package. The pure TypeScript in `db/`, `src/lib/`, and `src/types/` is type-checked separately by `npm run typecheck` (the native TS 7 compiler, `tsgo`), which does **not** process `.astro` files.
 
+## Comments and Documentation
+
+### Component Props Documentation
+
+Always document the `Props` interface for reusable `.astro` components using JSDoc comments. This makes the component API self-explanatory and helps maintainers and Copilot understand how to use the component:
+
+```astro
+---
+/**
+ * Props for the GameCard component.
+ * @prop {Game} game - The game object containing title, description, and metadata
+ * @prop {boolean} [featured] - Whether to display the card in a featured style (optional)
+ */
+interface Props {
+  game: Game;
+  featured?: boolean;
+}
+
+const { game, featured = false } = Astro.props;
+---
+
+<article class={featured ? 'featured' : ''}>
+  <h2>{game.title}</h2>
+</article>
+```
+
+### Comment Philosophy
+
+Follow these guidelines for comments:
+
+- **Comment intent, not mechanics.** Explain *why* a piece of code exists or the reasoning behind a non-obvious decision, not *what* the code already says.
+- **Remove restating comments.** Delete comments that merely paraphrase the line below them.
+- **Keep comments current.** Treat outdated comments as bugs — update or delete them in the same change that touches the related code.
+
+**Good:**
+```astro
+---
+// We order by title to ensure consistent pagination across builds
+const games = await getAllGames(db).then(g => g.sort((a, b) => a.title.localeCompare(b.title)));
+---
+```
+
+**Bad (restating code):**
+```astro
+---
+// Fetch all games
+const games = await getAllGames(db);
+// Sort by title
+const sorted = games.sort((a, b) => a.title.localeCompare(b.title));
+---
+```
+
 ## Best Practices
 
 - Keep data fetching in frontmatter (build time); avoid client-side fetching
